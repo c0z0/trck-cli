@@ -1,22 +1,64 @@
 #!/usr/bin/env node
 const notifier = require('node-notifier')
-const ProgressBar = require('progress')
+const chalk = require('chalk')
+const boxen = require('boxen')
 
-let minutes = 0
+function startWorking() {
+	let seconds = 0
+	const timer = setInterval(() => {
+		console.log('\x1Bc')
+		console.log(
+			boxen(
+				chalk.bold(`Working `) +
+					`${Math.floor((60 * 25 - seconds) / 60)
+						.toString()
+						.padStart(2, '0')}:${((60 * 25 - seconds) % 60)
+						.toString()
+						.padStart(2, '0')}`,
+				{
+					padding: 1,
+					borderColor: 'yellow',
+					borderStyle: 'round',
+					float: 'center'
+				}
+			)
+		)
+		if (seconds === 25 * 60) {
+			clearInterval(timer)
+			notifier.notify('Time for a break!')
+			startBreak()
+		}
+		seconds++
+	}, 1000)
+}
 
-var bar = new ProgressBar('Working [:bar] :passed/:minutes min', {
-	total: 25 * 2
-})
-var timer = setInterval(function() {
-	bar.tick({ passed: Math.floor(minutes / 2), minutes: 25 })
-	if (bar.complete) {
-		clearInterval(timer)
-		notifier.notify({
-			title: 'Work done!',
-			message: 'Time to take a 5 minute brake.',
-			sound: true
-		})
-	}
+function startBreak() {
+	let seconds = 0
+	const timer = setInterval(() => {
+		console.log('\x1Bc')
+		console.log(
+			boxen(
+				chalk.bold(`Break time `) +
+					`${Math.floor((60 * 5 - seconds) / 60)
+						.toString()
+						.padStart(2, '0')}:${((60 * 5 - seconds) % 60)
+						.toString()
+						.padStart(2, '0')}`,
+				{
+					padding: 1,
+					borderColor: 'green',
+					float: 'center',
+					borderStyle: 'round'
+				}
+			)
+		)
+		if (seconds === 5 * 60) {
+			clearInterval(timer)
+			notifier.notify('Time for work!')
+			startWorking()
+		}
+		seconds++
+	}, 1000)
+}
 
-	minutes++
-}, 10)
+startWorking()
