@@ -2,17 +2,42 @@
 const notifier = require('node-notifier')
 const chalk = require('chalk')
 const boxen = require('boxen')
+const arg = require('arg')
+
+const args = arg({
+	// Types
+	'--help': Boolean,
+	'--work': Number,
+	'--break': Number,
+
+	// Aliases
+	'-h': '--help',
+	'-w': '--work',
+	'-b': '--break'
+})
+
+if (args['--help']) {
+	console.log('--work | -w : minutes of work')
+	console.log('--break | -b : minutes of break')
+	process.exit()
+}
+
+const settings = {
+	work: args['--work'] || 25,
+	break: args['--break'] || 5
+}
 
 function startWorking() {
 	let seconds = 0
+	const time = 60 * settings.work
 	const timer = setInterval(() => {
 		console.log('\x1Bc')
 		console.log(
 			boxen(
 				chalk.bold(`Working `) +
-					`${Math.floor((60 * 25 - seconds) / 60)
+					`${Math.floor((time - seconds) / 60)
 						.toString()
-						.padStart(2, '0')}:${((60 * 25 - seconds) % 60)
+						.padStart(2, '0')}:${((time - seconds) % 60)
 						.toString()
 						.padStart(2, '0')}`,
 				{
@@ -23,7 +48,7 @@ function startWorking() {
 				}
 			)
 		)
-		if (seconds === 25 * 60) {
+		if (seconds === time) {
 			clearInterval(timer)
 			notifier.notify('Time for a break!')
 			startBreak()
@@ -34,14 +59,15 @@ function startWorking() {
 
 function startBreak() {
 	let seconds = 0
+	const time = 60 * settings.break
 	const timer = setInterval(() => {
 		console.log('\x1Bc')
 		console.log(
 			boxen(
 				chalk.bold(`Break time `) +
-					`${Math.floor((60 * 5 - seconds) / 60)
+					`${Math.floor((time - seconds) / 60)
 						.toString()
-						.padStart(2, '0')}:${((60 * 5 - seconds) % 60)
+						.padStart(2, '0')}:${((time - seconds) % 60)
 						.toString()
 						.padStart(2, '0')}`,
 				{
@@ -52,7 +78,7 @@ function startBreak() {
 				}
 			)
 		)
-		if (seconds === 5 * 60) {
+		if (seconds === time) {
 			clearInterval(timer)
 			notifier.notify('Time for work!')
 			startWorking()
