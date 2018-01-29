@@ -1,6 +1,6 @@
 {
 	"name": "trck-cli",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"main": "index.js",
 	"repository": "git@github.com:c0z0/trck-cli.git",
 	"author": "Cosmin Serdean <cosmoserdean@gmail.com>",
@@ -12,6 +12,7 @@
 		"arg": "^1.0.0",
 		"boxen": "^1.3.0",
 		"chalk": "^2.3.0",
-		"node-notifier": "^5.2.1"
+		"node-notifier": "^5.2.1",
+		"progress": "^2.0.0"
 	}
 }
